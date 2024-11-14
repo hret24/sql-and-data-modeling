@@ -8,6 +8,12 @@ db = SQLAlchemy()
 # Models.
 #----------------------------------------------------------------------------#
 
+# Association table to link Venue and Artist
+venue_artist_association = db.Table('venue_artist_association',
+    db.Column('venue_id', db.Integer, db.ForeignKey('venue.id'), primary_key=True),
+    db.Column('artist_id', db.Integer, db.ForeignKey('artist.id'), primary_key=True)
+)
+
 class Venue(db.Model):
     __tablename__ = 'venue'
 
@@ -23,8 +29,17 @@ class Venue(db.Model):
     genres = db.Column(postgresql.ARRAY(db.String))
     seeking_for_artist = db.Column(db.Boolean, default=False)
     seeking_description = db.Column(db.String)
-    artists = db.relationship('Artist', secondary='Show', backref=db.backref('venues', lazy=True), viewonly=True)
-    shows = db.relationship('Show', backref='venues', lazy=True)
+
+
+    # Many-to-many relationship to Artist using the association table
+    artists = db.relationship('Artist', secondary=venue_artist_association, lazy=True)
+    shows = db.relationship('Show', backref='venue', lazy=True)
+
+    def __repr__(self):
+        return f'<Venue {self.name}>'
+
+    # artists = db.relationship('Artist', secondary='Show', backref=db.backref('venues', lazy=True), viewonly=True)
+    # shows = db.relationship('Show', backref='venues', lazy=True)
 
     # TODO: implement any missing fields, as a database migration using Flask-Migrate DONE
 
@@ -42,38 +57,18 @@ class Artist(db.Model):
     website_link = db.Column(db.String)
     seeking_for_venue = db.Column(db.Boolean, default=False)
     seeking_description = db.Column(db.String)
-    venues = db.relationship('Venue', backref=db.backref('artists', lazy=True)) 
-    shows = db.relationship('Show', backref='artists',lazy=True)
+
+    # Many-to-many relationship to Venue using the association table
+    venues = db.relationship('Venue', secondary=venue_artist_association, lazy=True)
+    shows = db.relationship('Show', backref='artist', lazy=True)
+
+    def __repr__(self):
+        return f'<Artist {self.name}>'
+
+    # venues = db.relationship('Venue', backref=db.backref('artists', lazy=True)) 
+    # shows = db.relationship('Show', backref='artists',lazy=True)
 
     # TODO: implement any missing fields, as a database migration using Flask-Migrate DONE
-
-# class Show(db.Model):
-#     __tablename__ = 'show'
-
-#     venue_id = db.Column(db.Integer, db.ForeignKey('venue.id'), primary_key=True)
-#     artist_id = db.Column(db.Integer, db.ForeignKey('artist.id'), primary_key=True)
-#     start_time = db.Column(db.DateTime, nullable=False, default=datetime.now())
-
-# # TODO Implement Show and Artist models, and complete all model relationships and properties, as a database migration. DONE
-
-# class Show(db.Model):
-#     __tablename__ = 'show'
-
-#     venue_id = db.Column(db.Integer, db.ForeignKey('venue.id'), primary_key=True)
-#     artist_id = db.Column(db.Integer, db.ForeignKey('artist.id'), primary_key=True)
-#     start_time = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
-
-#     # Define relationships to Venue and Artist
-#     venue = db.relationship('Venue', backref=db.backref('shows', lazy=True))
-#     artist = db.relationship('Artist', backref=db.backref('shows', lazy=True))
-
-#     # Composite key now includes 'start_time'
-#     __table_args__ = (
-#         db.PrimaryKeyConstraint('venue_id', 'artist_id', 'start_time'),
-#     )
-
-#     def __repr__(self):
-#         return f'<Show {self.venue_id} - {self.artist_id} - {self.start_time}>'
 
 class Show(db.Model):
     __tablename__ = 'show'
@@ -89,3 +84,5 @@ class Show(db.Model):
 
     def __repr__(self):
         return f'<Show {self.show_id} - {self.venue_id} - {self.artist_id} - {self.start_time}>'
+
+    # TODO Implement Show and Artist models, and complete all model relationships and properties, as a database migration. DONE
