@@ -79,8 +79,8 @@ class Show(db.Model):
     start_time = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
 
     # Define relationships to Venue and Artist
-    venue = db.relationship('Venue', backref=db.backref('shows', lazy=True))
-    artist = db.relationship('Artist', backref=db.backref('shows', lazy=True))
+    # venue = db.relationship('Venue')
+    # artist = db.relationship('Artist')
 
     def __repr__(self):
         return f'<Show {self.show_id} - {self.venue_id} - {self.artist_id} - {self.start_time}>'
