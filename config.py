@@ -11,3 +11,7 @@ DEBUG = True
 
 # TODO IMPLEMENT DATABASE URL DONE
 SQLALCHEMY_DATABASE_URI = 'postgresql://haresh@localhost:5432/fyyur'
+
+# DISABLE CSRF
+WTF_CSRF_ENABLED = False
+

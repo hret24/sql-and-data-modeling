@@ -117,6 +117,45 @@
   <script>window.jQuery || document.write('<script type="text/javascript" src="/static/js/libs/jquery-1.11.1.min.js"><\/script>')</script>
   <script type="text/javascript" src="/static/js/libs/bootstrap-3.1.1.min.js" defer></script>
   <script type="text/javascript" src="/static/js/plugins.js" defer></script>
+  
 
 </body>
+
+<script>
+  // Modify the deleteVenue function to accept the venueId
+  function deleteVenue(venueId) {
+      const confirmDelete = confirm('Are you sure you want to delete this venue?');
+      
+      if (confirmDelete) {
+          fetch(`/venues/${venueId}`, {
+              method: 'DELETE',
+              headers: {
+                  'Content-Type': 'application/json',
+              },
+          })
+          .then(response => {
+            // Log the response to check what we are receiving
+            console.log(response);
+            if (response.ok) {
+                return response.json();
+            } else {
+                throw new Error('Failed to delete venue');
+            }
+        })          
+        .then(data => {
+              if (data.success) {
+                  alert(data.message); 
+                  window.location.href = '/'; // Redirect to homepage
+              } else {
+                  alert(data.message); // Error message
+              }
+          })
+          .catch(err => {
+              console.error('Error:', err);
+              alert('An error occurred while deleting the venue.');
+          });
+      }
+  }
+</script>
+
 </html>

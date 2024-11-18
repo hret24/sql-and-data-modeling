@@ -3,17 +3,25 @@
 {% block content %}
 {% for area in areas %}
 <h3>{{ area.city }}, {{ area.state }}</h3>
-	<ul class="items">
-		{% for venue in area.venues %}
-		<li>
-			<a href="/venues/{{ venue.id }}">
-				<i class="fas fa-music"></i>
-				<div class="item">
-					<h5>{{ venue.name }}</h5>
-				</div>
-			</a>
-		</li>
-		{% endfor %}
-	</ul>
+<ul class="items">
+    {% for venue in area.venues %}
+    <li style="display: flex; justify-content: space-between; align-items: center; padding: 10px; border-bottom: 1px solid #ddd;">
+        <a href="/venues/{{ venue.id }}" style="flex-grow: 1; display: flex; align-items: center;">
+            <i class="fas fa-music" style="margin-right: 8px;"></i>
+            <div class="item" style="margin-right: 10px;">
+                <h5 style="margin: 0; font-size: 16px;">{{ venue.name }}</h5>
+            </div>
+        </a>
+        <form id="deleteVenueForm" method="POST" action="/venues/{{ venue.id }}" style="margin: 0;">
+            <button 
+                type="button" 
+                onclick="deleteVenue('{{ venue.id }}')" 
+                style="background-color: #ff4d4d; color: white; border: none; padding: 5px 10px; font-size: 14px; cursor: pointer; border-radius: 5px; transition: background-color 0.3s ease;">
+                Delete Venue
+            </button>
+        </form>
+    </li>
+    {% endfor %}
+</ul>
 {% endfor %}
 {% endblock %}
