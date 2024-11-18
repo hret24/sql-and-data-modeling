@@ -211,7 +211,6 @@ def create_venue_submission():
 def delete_venue(venue_id):
     error = False
     try:
-        # Try to delete the venue
         Venue.query.filter_by(id=venue_id).delete()
         db.session.commit()
     except:
