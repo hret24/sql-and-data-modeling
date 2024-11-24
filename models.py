@@ -9,10 +9,10 @@ db = SQLAlchemy()
 #----------------------------------------------------------------------------#
 
 # Association table to link Venue and Artist
-venue_artist_association = db.Table('venue_artist_association',
-    db.Column('venue_id', db.Integer, db.ForeignKey('venue.id'), primary_key=True),
-    db.Column('artist_id', db.Integer, db.ForeignKey('artist.id'), primary_key=True)
-)
+# venue_artist_association = db.Table('venue_artist_association',
+#     db.Column('venue_id', db.Integer, db.ForeignKey('venue.id'), primary_key=True),
+#     db.Column('artist_id', db.Integer, db.ForeignKey('artist.id'), primary_key=True)
+# )
 
 class Venue(db.Model):
     __tablename__ = 'venue'
@@ -26,14 +26,14 @@ class Venue(db.Model):
     image_link = db.Column(db.String(500))
     facebook_link = db.Column(db.String(120))
     website_link = db.Column(db.String)
-    genres = db.Column(postgresql.ARRAY(db.String))
-    seeking_for_artist = db.Column(db.Boolean, default=False)
+    genres = db.Column(db.ARRAY(db.String), nullable=False)
+    seeking_talent = db.Column(db.Boolean, default=False)
     seeking_description = db.Column(db.String)
 
 
     # Many-to-many relationship to Artist using the association table
-    artists = db.relationship('Artist', secondary=venue_artist_association, lazy=True)
-    shows = db.relationship('Show', backref='venue', lazy=True)
+    # artists = db.relationship('Artist', secondary=venue_artist_association, lazy=True)
+    shows = db.relationship('Show', backref='venue', lazy='joined', cascade='all, delete')
 
     def __repr__(self):
         return f'<Venue {self.name}>'
@@ -51,16 +51,16 @@ class Artist(db.Model):
     city = db.Column(db.String(120), nullable=False)
     state = db.Column(db.String(120), nullable=False)
     phone = db.Column(db.String(120))
-    genres = db.Column(postgresql.ARRAY(db.String))
+    genres = db.Column(db.ARRAY(db.String), nullable=False)
     facebook_link = db.Column(db.String(120))
     image_link = db.Column(db.String(500))
     website_link = db.Column(db.String)
-    seeking_for_venue = db.Column(db.Boolean, default=False)
+    seeking_venue = db.Column(db.Boolean, default=False)
     seeking_description = db.Column(db.String)
 
     # Many-to-many relationship to Venue using the association table
-    venues = db.relationship('Venue', secondary=venue_artist_association, lazy=True)
-    shows = db.relationship('Show', backref='artist', lazy=True)
+    # venues = db.relationship('Venue', secondary=venue_artist_association, lazy=True)
+    shows = db.relationship('Show', backref='artist', lazy='joined', cascade='all, delete')
 
     def __repr__(self):
         return f'<Artist {self.name}>'
