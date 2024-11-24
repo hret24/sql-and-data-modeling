@@ -3,7 +3,7 @@ from flask_wtf import FlaskForm
 from wtforms import StringField, SelectField, SelectMultipleField, DateTimeField, BooleanField
 from wtforms.validators import DataRequired, AnyOf, URL, ValidationError
 from enum import Enum
-from enum import Genre, State
+from custom_enums import Genre, State, FacebookURL
 
 def validate_genres(form, field):
     for genre in field.data:
@@ -21,6 +21,13 @@ def validate_phone(form, field):
             f"'{field.data}' is not a valid phone number. Use the format XXX-XXX-XXXX."
         )
 
+def validate_facebook_link(form, field):
+    if not any(field.data.startswith(url.value) for url in FacebookURL):
+        raise ValidationError(
+            f"'{field.data}' is not a valid Facebook URL. It must start with one of the following: "
+            f"{', '.join([url.value for url in FacebookURL])}"
+        )
+        
 class ShowForm(FlaskForm):
     artist_id = StringField(
         'artist_id'
@@ -54,8 +61,9 @@ class VenueForm(FlaskForm):
         'address', validators=[DataRequired()]
     )
     phone = StringField(
-        'phone'
-    )
+        'phone', validators=[DataRequired(), validate_phone]
+    ) 
+
     image_link = StringField(
         'image_link'
     )
@@ -63,10 +71,10 @@ class VenueForm(FlaskForm):
         'genres', validators=[DataRequired(), validate_genres],
         choices=Genre.choices()
     )
-
     facebook_link = StringField(
-        'facebook_link', validators=[URL()]
+        'facebook_link', validators=[URL(), validate_facebook_link]
     )
+    
     website_link = StringField(
         'website_link'
     )
@@ -89,9 +97,8 @@ class ArtistForm(FlaskForm):
         choices=State.choices()
     )
     phone = StringField(
-        # TODO implement validation logic for state
-        'phone'
-    )
+        'phone', validators=[DataRequired(), validate_phone]
+    ) 
     image_link = StringField(
         'image_link'
     )
@@ -100,8 +107,7 @@ class ArtistForm(FlaskForm):
         choices=Genre.choices()
     )
     facebook_link = StringField(
-        # TODO implement enum restriction
-        'facebook_link', validators=[URL()]
+        'facebook_link', validators=[URL(), validate_facebook_link]
     )
 
     website_link = StringField(

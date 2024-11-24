@@ -82,3 +82,13 @@ class State(Enum):
     @classmethod
     def choices(cls):
         return [(choice.name, choice.value) for choice in cls]
+
+class FacebookURL(Enum):
+    FACEBOOK = "https://www.facebook.com/"
+    FACEBOOK_MOBILE = "https://m.facebook.com/"
+
+    @classmethod
+    def choices(cls):
+        """Returns a list of (value, label) tuples for select fields."""
+        return [(e.value, e.name) for e in cls]
+
